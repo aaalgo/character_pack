@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import yaml
+from glob import glob
 import pickle
 from collections import defaultdict
 
@@ -68,4 +69,8 @@ def generate (path, resp):
             f.write('  %s\n' % line)
 
 if __name__ == '__main__':
-    generate('Trump.yml', load('Trump.pkl'))
+    for path in glob('*.pkl'):
+        bn = path.split('.')[0]
+        out = '../characters/%s.yml' % bn
+        if not os.path.exists(out):
+            generate(out, load(path))

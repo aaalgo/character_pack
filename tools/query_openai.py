@@ -2,12 +2,13 @@
 import os
 import yaml
 import pickle
+import pandas as pd
 import openai
 
-openai.organization = os.getenv("OPENAI_ORG")
+#openai.organization = os.getenv("OPENAI_ORG")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-assert len(openai.organization) > 0
+#assert len(openai.organization) > 0
 assert len(openai.api_key) > 0
 
 TEMPLATE = [
@@ -52,16 +53,11 @@ class Character:
 
 
 if __name__ == '__main__':
-    '''
-    sample = {
-            'name': 'Feynman',
-            'full_name': 'Richard Feynman',
-            'count': 10
-            }
-    '''
-    sample = {
-            'name': 'Trump',
-            'full_name': 'Donald Trump',
-            'count': 10
-            }
-    query_chatgpt(sample, 'Trump.pkl')
+    df = pd.read_csv('../data/names.csv')
+    for _, row in df.iterrows():
+        sample = dict(row)
+        sample['count'] = 10
+        cache = '%s.pkl' % sample['name']
+        if not os.path.exists(cache):
+            print("Querying %s..." % sample['full_name'])
+            query_chatgpt(sample, cache)
